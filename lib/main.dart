@@ -1,14 +1,19 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'get_prediction.dart';
 import 'package:http/http.dart' as http;
+import 'get_results.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -28,6 +33,24 @@ class AudioFilePicker extends StatefulWidget {
 }
 
 class _AudioFilePickerState extends State<AudioFilePicker> {
+  final CollectionReference _students =
+      FirebaseFirestore.instance.collection('results');
+
+  String _fileNameController = "";
+  String _resultController = "";
+
+  Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
+    final String fileName = _fileNameController;
+    final String _result = _resultController;
+    _students.add({
+      "File Name": fileName,
+      "Result": _result,
+    });
+
+    _fileNameController = '';
+    _resultController = '';
+  }
+
   Future<String> makeBase64(String path) async {
     try {
       File file = File(path);
@@ -60,6 +83,11 @@ class _AudioFilePickerState extends State<AudioFilePicker> {
     }
   }
 
+  void _navigateToNextScreen(BuildContext context) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => Results()));
+  }
+
   Future<GetPrediction> askPrediction(String base64String) async {
     // setState(() {
     //   loading = true;
@@ -67,7 +95,7 @@ class _AudioFilePickerState extends State<AudioFilePicker> {
     // String base64String = base64Encode(img);
     // print(base64String);
     final response = await http.post(
-      Uri.parse('https://3bb8-49-205-230-4.in.ngrok.io/predict'),
+      Uri.parse('https://4aa7-183-82-111-80.in.ngrok.io/predict'),
       headers: <String, String>{
         'Content-Type': 'application/json',
       },
@@ -91,12 +119,15 @@ class _AudioFilePickerState extends State<AudioFilePicker> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Audio File Picker'),
+        title: Text('Urban Traffic Control'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+                onPressed: () => {_navigateToNextScreen(context)},
+                child: const Text('Saved Results')),
             ElevatedButton(
               onPressed: _pickFile,
               child: Text('Select Audio File'),
@@ -128,6 +159,15 @@ class _AudioFilePickerState extends State<AudioFilePicker> {
                     style: TextStyle(fontSize: 16.0),
                   )
                 : Container(),
+            res != ""
+                ? ElevatedButton(
+                    onPressed: () => {
+                          _fileNameController = _fileName,
+                          _resultController = res,
+                          _create()
+                        },
+                    child: Text('Save Result'))
+                : Container()
           ],
         ),
       ),

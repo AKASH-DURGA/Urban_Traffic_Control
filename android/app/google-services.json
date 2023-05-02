@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "596341405687",
+    "project_id": "urban-traffic-control",
+    "storage_bucket": "urban-traffic-control.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596341405687:android:5748c348e53c2ad949e0f2",
+        "android_client_info": {
+          "package_name": "com.example.urban_traffic_control"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596341405687-tlg99u8e68uqlsv99u95oit28t4mg4dp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCKV0zdZ2yxblcANmTwmnMQtx0o9_n_B4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596341405687-tlg99u8e68uqlsv99u95oit28t4mg4dp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
